@@ -36,7 +36,7 @@
 // Validation (leave-one-out over the 37 comparables with full release-day curves
 // in the kit's practice cases, scored with the contest's exact pinball loss):
 //   house persistence baseline : 0.930 mean loss, 90% coverage 0.62
-//   this model                  : 0.382 mean loss, 90% coverage 0.90
+//   this model                  : 0.381 mean loss, 90% coverage 0.90
 // On the big targets only (hour 1 >= 20,000 viewers, the GTA VI scale): baseline
 // 0.321, this model 0.265. The model beats the house baseline on both, and its
 // 90% coverage sits at 0.90, i.e. the spread is calibrated, not guessed.
@@ -59,9 +59,13 @@ const LEVELS = [0.05, 0.25, 0.5, 0.75, 0.95];
 const Z = [-1.645, -0.674, 0, 0.674, 1.645];
 /** Kernel bandwidth in log units: how far in log hour-1 a comparable still counts. */
 const BANDWIDTH = 1.5;
-/** Floor and cap on the log spread, so a degenerate fit cannot go razor-thin or absurdly wide. */
+/** Floor and cap on the log spread, so a degenerate fit cannot go razor-thin or absurdly wide.
+    The cap was 1.2, but leave-one-out showed it binding exactly on the hours where past
+    launches disagreed most (small hour-1 launches that grew 100x+), truncating the bands
+    just where they needed to be widest. 1.5 leaves the big-target loss untouched (0.265)
+    and cuts the small-target loss, for 0.381 overall instead of 0.382. */
 const SD_FLOOR = 0.15;
-const SD_CAP = 1.2;
+const SD_CAP = 1.5;
 /** Floor on the median ratio: a rising-type launch is never forecast to collapse. */
 const RATIO_FLOOR = 0.8;
 /** The house baseline's spread, used only by the fallback. */
